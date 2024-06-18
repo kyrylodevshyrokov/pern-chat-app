@@ -40,9 +40,9 @@ npm install
 
 ```javascript
 DATABASE_URL = your_neon_db_url;
-JWT_SECRET = your_jwt_secret;
 NODE_ENV = development;
 
+JWT_SECRET = your_jwt_secret;
 TOKEN_EXPIRATION = your_token_expiration_time;
 SALT_LENGTH = your_salt_length;
 
