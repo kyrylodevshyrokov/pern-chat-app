@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon --watch backend/src --exec tsx backend/src/index.ts"
+    "dev": "nodemon --watch src --exec tsx src/index.ts"
   },
   "type": "module",
   "keywords": [],
