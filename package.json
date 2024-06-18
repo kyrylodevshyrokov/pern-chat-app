@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "tsx src/index.ts",
     "dev": "nodemon --watch src --exec tsx src/index.ts"
   },
   "type": "module",
