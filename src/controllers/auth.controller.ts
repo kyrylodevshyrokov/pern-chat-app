@@ -1,7 +1,8 @@
-import { json, Request, Response } from "express";
+import { Request, Response } from "express";
 import prisma from "../db/prisma.js";
 import bcryptjs from "bcryptjs";
 import generateToken from "../utils/generateToken.js";
+import status from "http-status";
 
 export const signup = async (req: Request, res: Response) => {
   try {
@@ -11,20 +12,28 @@ export const signup = async (req: Request, res: Response) => {
       !fullName || !username || !password || !confirmPassword || !gender;
 
     if (isNotValidUserData) {
-      return res.status(400).json({ error: "Please, fill in all fields" });
+      return res
+        .status(status.BAD_REQUEST)
+        .json({ error: "Please, fill in all fields" });
     }
 
     if (password !== confirmPassword) {
-      return res.status(400).json({ error: "Passwords don't match" });
+      return res
+        .status(status.BAD_REQUEST)
+        .json({ error: "Passwords don't match" });
     }
 
     const user = await prisma.user.findUnique({ where: { username } });
 
     if (user) {
-      return res.status(400).json({ error: "Username already exists" });
+      return res
+        .status(status.CONFLICT)
+        .json({ error: "Username already exists" });
     }
 
-    const salt = await bcryptjs.genSalt(10);
+    const SALT_LENGTH = parseInt(process.env.SALT_LENGTH ?? "10");
+
+    const salt = await bcryptjs.genSalt(SALT_LENGTH);
     const hashedPassword = await bcryptjs.hash(password, salt);
 
     const boyProfilePic = `https://avatar.iran.liara.run/public/boy?username=${username}`;
@@ -47,18 +56,20 @@ export const signup = async (req: Request, res: Response) => {
 
       generateToken(id, res);
 
-      res.status(201).json({
+      res.status(status.CREATED).json({
         id,
         fullName,
         username,
         profilePic,
       });
     } else {
-      res.status(400).json({ error: "Invalid User data" });
+      res.status(status.BAD_REQUEST).json({ error: "Invalid User data" });
     }
   } catch (error: any) {
     console.log("Error in signup controller", error.message);
-    res.status(500).json({ error: "Internal server error" });
+    res
+      .status(status.INTERNAL_SERVER_ERROR)
+      .json({ error: "Internal server error" });
   }
 };
 
@@ -69,18 +80,22 @@ export const login = async (req: Request, res: Response) => {
     const user = await prisma.user.findUnique({ where: { username } });
 
     if (!user) {
-      return res.status(400).json({ error: "Invalid credentials" });
+      return res
+        .status(status.BAD_REQUEST)
+        .json({ error: "Invalid credentials" });
     }
 
     const isPasswordCorrect = await bcryptjs.compare(password, user.password);
 
     if (!isPasswordCorrect) {
-      return res.status(400).json({ error: "Invalid credentials" });
+      return res
+        .status(status.BAD_REQUEST)
+        .json({ error: "Invalid credentials" });
     }
 
     generateToken(user.id, res);
 
-    res.status(200).json({
+    res.status(status.OK).json({
       id: user.id,
       fullName: user.fullName,
       username: user.username,
@@ -88,17 +103,21 @@ export const login = async (req: Request, res: Response) => {
     });
   } catch (error: any) {
     console.log("Error in login controller", error.message);
-    res.status(500).json({ error: "Internal server error" });
+    res
+      .status(status.INTERNAL_SERVER_ERROR)
+      .json({ error: "Internal server error" });
   }
 };
 
 export const logout = async (req: Request, res: Response) => {
   try {
     res.cookie("jwt", "", { maxAge: 0 });
-    res.status(200).json({ message: "Logged out successfully" });
+    res.status(status.OK).json({ message: "Logged out successfully" });
   } catch (error: any) {
     console.log("Error in logout controller", error.message);
-    res.status(500).json({ error: "Internal server error" });
+    res
+      .status(status.INTERNAL_SERVER_ERROR)
+      .json({ error: "Internal server error" });
   }
 };
 
@@ -107,14 +126,16 @@ export const getMe = async (req: Request, res: Response) => {
     const user = await prisma.user.findUnique({ where: { id: req.user.id } });
 
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(status.NOT_FOUND).json({ error: "User not found" });
     }
 
     const { id, fullName, username, profilePic } = user;
 
-    res.status(200).json({ id, fullName, username, profilePic });
+    res.status(status.OK).json({ id, fullName, username, profilePic });
   } catch (error: any) {
     console.log("Error in getMe controller", error.message);
-    res.status(500).json({ error: "Internal server error" });
+    res
+      .status(status.INTERNAL_SERVER_ERROR)
+      .json({ error: "Internal server error" });
   }
 };

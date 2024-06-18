@@ -3,9 +3,10 @@ import { Response } from "express";
 
 const generateToken = (userId: string, res: Response) => {
   const JWT_SECRET = process.env.JWT_SECRET;
+  const TOKEN_EXPIRATION = process.env.TOKEN_EXPIRATION;
 
   const token = jwt.sign({ userId }, JWT_SECRET!, {
-    expiresIn: "15d",
+    expiresIn: TOKEN_EXPIRATION,
   });
 
   const tokenMaxAge = 15 * 24 * 60 * 60 * 1000;

@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import prisma from "../db/prisma.js";
+import status from "http-status";
 
 interface DecodedToken extends JwtPayload {
   userId: string;
@@ -26,7 +27,7 @@ const protectRoute = async (
 
     if (!token) {
       return res
-        .status(401)
+        .status(status.UNAUTHORIZED)
         .json({ error: "Unauthorized - no token provided" });
     }
 
@@ -34,7 +35,7 @@ const protectRoute = async (
 
     if (!decoded) {
       return res
-        .status(401)
+        .status(status.UNAUTHORIZED)
         .json({ error: "Unauthorized - no token provided" });
     }
 
@@ -44,7 +45,7 @@ const protectRoute = async (
     });
 
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(status.NOT_FOUND).json({ error: "User not found" });
     }
 
     req.user = user;
@@ -52,7 +53,9 @@ const protectRoute = async (
     next();
   } catch (error: any) {
     console.log("Error in protectRoute middleware", error.message);
-    res.status(500).json({ error: "Internal server error" });
+    res
+      .status(status.INTERNAL_SERVER_ERROR)
+      .json({ error: "Internal server error" });
   }
 };
 

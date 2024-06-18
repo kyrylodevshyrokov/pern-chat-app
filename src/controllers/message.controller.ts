@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import prisma from "../db/prisma.js";
+import status from "http-status";
 
 export const sendMessage = async (req: Request, res: Response) => {
   try {
@@ -49,10 +50,12 @@ export const sendMessage = async (req: Request, res: Response) => {
       });
     }
 
-    res.status(201).json(newMessage);
+    res.status(status.CREATED).json(newMessage);
   } catch (error: any) {
     console.log("Error in sendMessage controller", error.message);
-    res.status(500).json({ error: "Internal server error" });
+    res
+      .status(status.INTERNAL_SERVER_ERROR)
+      .json({ error: "Internal server error" });
   }
 };
 
@@ -77,13 +80,15 @@ export const getMessages = async (req: Request, res: Response) => {
     });
 
     if (!conversation) {
-      return res.status(200).json([]);
+      return res.status(status.OK).json([]);
     }
 
-    return res.status(200).json(conversation.messages);
+    return res.status(status.OK).json(conversation.messages);
   } catch (error: any) {
     console.log("Error in getMessages controller", error.message);
-    res.status(500).json({ error: "Internal server error" });
+    res
+      .status(status.INTERNAL_SERVER_ERROR)
+      .json({ error: "Internal server error" });
   }
 };
 
@@ -104,9 +109,11 @@ export const getUsersForSidebar = async (req: Request, res: Response) => {
       },
     });
 
-    res.status(200).json(users);
+    res.status(status.OK).json(users);
   } catch (error: any) {
     console.log("Error in getUsersForSidebar controller", error.message);
-    res.status(500).json({ error: "Internal server error" });
+    res
+      .status(status.INTERNAL_SERVER_ERROR)
+      .json({ error: "Internal server error" });
   }
 };
