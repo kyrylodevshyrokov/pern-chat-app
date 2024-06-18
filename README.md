@@ -62,4 +62,78 @@ Here are the routes that can be used for routing in the app.
 
 ### _Auth And Users_
 
+### Sign Up
+
+- Method: **POST**
+- URL: {{URL}}/api/auth/signup
+- Data:
+```bash
+{
+    "fullName": "Low Doe",
+    "username": "lowdoe",
+    "gender": "male",
+    "password": "123456",
+    "confirmPassword": "123456"
+}
+```
+- Requires Auth: **NO**
+- Description: This endpoint enables users to register by sending a POST request containing their chosen fullName, username, gender, password, and confirmPassword.
+
+### Log In
+
+- Method: **POST**
+- URL: {{URL}}/api/auth/login
+- Data:
+```bash
+{
+    "username": "lowdoe",
+    "password": "123456"
+}
+```
+- Requires Auth: **NO**
+- Description: This endpoint enables users authenticate by sending a POST request with their username and password; upon successful authentication, an access token is stored in cookies.
+
+### Log Out
+
+- Method: **POST**
+- URL: {{URL}}/api/auth/logout
+- Requires Auth: **YES**
+- Description: This endpoint enables authenticated users to log out; upon successful log out, an access token is deleted from cookies.
+
+### Get Current User Profile
+
+- Method: **GET**
+- URL: {{URL}}/api/auth/me
+- Requires Auth: **YES**
+- Description: This endpoint retrieves the profile information of the currently authenticated user. 
+
+
 ###  _Messages_
+
+### Send Message
+
+- Method: **POST**
+- URL: {{URL}}/api/messages/send/:id
+- Data:
+```bash
+{
+    "message": "Hello there! This is my first message from Low Doe"
+}
+```
+- Requires Auth: **YES**
+- Description: This endpoint allows authenticated users to send a message to another user with filled following field: message. The id of receiver is located in URL.
+
+### Get All Messages Sent By User To Another Specific User
+
+- Method: **GET**
+- URL: {{URL}}/api/messages/:id
+- Requires Auth: **YES**
+- Description: This endpoint allows user to see all messages that were sent by her/him to another specific user.
+
+### Get All Users For Conversation Sidebar
+
+- Method: **GET**
+- URL: {{URL}}/api/messages/conversations
+- Requires Auth: **YES**
+- Description: This endpoint allows user to get a list of users with whom he/she can correspond.
+
