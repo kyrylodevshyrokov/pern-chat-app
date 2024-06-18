@@ -1,6 +1,6 @@
 # Chat API
 
-## About 
+## About
 
 The API is designed for user authentication, allowing logged-in users to send messages to other users and view messages sent to them.
 
@@ -39,9 +39,14 @@ npm install
 3. Create a `.env` file in the root of the project and fill it with the following example:
 
 ```javascript
-DATABASE_URL=your_neon_db_url
-JWT_SECRET=your_jwt_secret
-NODE_ENV=development
+DATABASE_URL = your_neon_db_url;
+JWT_SECRET = your_jwt_secret;
+NODE_ENV = development;
+
+TOKEN_EXPIRATION = your_token_expiration_time;
+SALT_LENGTH = your_salt_length;
+
+PORT = your_port;
 ```
 
 4. Sync the API Prisma schema with the serverless Postgres database:
@@ -67,6 +72,7 @@ Here are the routes that can be used for routing in the app.
 - Method: **POST**
 - URL: {{URL}}/api/auth/signup
 - Data:
+
 ```bash
 {
     "fullName": "Low Doe",
@@ -76,6 +82,7 @@ Here are the routes that can be used for routing in the app.
     "confirmPassword": "123456"
 }
 ```
+
 - Requires Auth: **NO**
 - Description: This endpoint enables users to register by sending a POST request containing their chosen fullName, username, gender, password, and confirmPassword.
 
@@ -84,12 +91,14 @@ Here are the routes that can be used for routing in the app.
 - Method: **POST**
 - URL: {{URL}}/api/auth/login
 - Data:
+
 ```bash
 {
     "username": "lowdoe",
     "password": "123456"
 }
 ```
+
 - Requires Auth: **NO**
 - Description: This endpoint enables users authenticate by sending a POST request with their username and password; upon successful authentication, an access token is stored in cookies.
 
@@ -105,21 +114,22 @@ Here are the routes that can be used for routing in the app.
 - Method: **GET**
 - URL: {{URL}}/api/auth/me
 - Requires Auth: **YES**
-- Description: This endpoint retrieves the profile information of the currently authenticated user. 
+- Description: This endpoint retrieves the profile information of the currently authenticated user.
 
-
-###  _Messages_
+### _Messages_
 
 ### Send Message
 
 - Method: **POST**
 - URL: {{URL}}/api/messages/send/:id
 - Data:
+
 ```bash
 {
     "message": "Hello there! This is my first message from Low Doe"
 }
 ```
+
 - Requires Auth: **YES**
 - Description: This endpoint allows authenticated users to send a message to another user with filled following field: message. The id of receiver is located in URL.
 
@@ -136,4 +146,3 @@ Here are the routes that can be used for routing in the app.
 - URL: {{URL}}/api/messages/conversations
 - Requires Auth: **YES**
 - Description: This endpoint allows user to get a list of users with whom he/she can correspond.
-
